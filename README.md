@@ -2,7 +2,7 @@
 
 A RESTful API for managing personal to-do lists, built with PHP 8.4 and Yii3. Users sign in with JWT access tokens and rotating refresh tokens, and manage their own tasks.
 
-This is a solution to the [Todo List API](https://roadmap.sh/projects/todo-list-api) in DDD presentation project from roadmap.sh.
+This is a solution to the [Todo List API](https://roadmap.sh/projects/todo-list-api) in [DDD](https://en.wikipedia.org/wiki/Domain-driven_design) presentation project from roadmap.sh.
 
 ## Requirements
 
