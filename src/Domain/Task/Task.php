@@ -6,34 +6,18 @@ namespace App\Domain\Task;
 
 use App\Domain\User\UserId;
 use DateTimeImmutable;
+use DateTimeInterface;
 
 final class Task
 {
-    public readonly TaskId $id;
-
-    private(set) TaskTitle $title;
-
-    private(set) TaskDescription $description;
-
-    public readonly DateTimeImmutable $createdAt;
-    private(set) DateTimeImmutable $updatedAt;
-
-    private(set) UserId $createdBy;
-
     public function __construct(
-        TaskId $id,
-        TaskTitle $title,
-        TaskDescription $description,
-        UserId $createdBy,
-    )
-    {
-        $this->id = $id;
-        $this->title = $title;
-        $this->description = $description;
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-        $this->createdBy = $createdBy;
-    }
+        public readonly TaskId                  $id,
+        private(set) TaskTitle                  $title,
+        private(set) TaskDescription            $description,
+        private(set) readonly UserId            $createdBy,
+        public readonly DateTimeInterface       $createdAt = new DateTimeImmutable(),
+        private(set) readonly DateTimeInterface $updatedAt = new DateTimeImmutable(),
+    ) {}
 
     public function isCreatedBy(UserId $userId): bool
     {

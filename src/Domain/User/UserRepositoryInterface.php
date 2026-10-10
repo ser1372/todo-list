@@ -18,13 +18,6 @@ interface UserRepositoryInterface
     public function createUser(User $user): void;
 
     /**
-     * @param string $token
-     * @throws UserNotFound
-     * @return User
-     */
-    public function getUserByAuthKey(string $token): User;
-
-    /**
      * @param UserId $id
      * @throws UserNotFound
      * @return User

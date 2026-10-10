@@ -6,25 +6,12 @@ namespace App\Domain\User;
 
 final class User
 {
-    public readonly UserId $id;
-    private(set) Email $email;
-    private(set) UserName $name;
-    private string $passwordHash;
-    private(set) string $authKey;
-
     public function __construct(
-        UserId $id,
-        Email $email,
-        UserName $name,
-        string $passwordHash,
-        string $authKey,
-    ) {
-        $this->id = $id;
-        $this->email = $email;
-        $this->name = $name;
-        $this->passwordHash = $passwordHash;
-        $this->authKey = $authKey;
-    }
+        public readonly UserId         $id,
+        private(set) readonly Email    $email,
+        private(set) readonly UserName $name,
+        private string                 $passwordHash,
+    ) {}
 
     public function isValidPassword(Password $password, PasswordHasherInterface $passwordHasher): bool
     {
@@ -34,11 +21,6 @@ final class User
     public function changePassword(Password $password, PasswordHasherInterface $passwordHasher): void
     {
         $this->setPassword($password, $passwordHasher);
-    }
-
-    public function generateAuthKey(AuthKeyGeneratorInterface $authKeyGenerator): void
-    {
-        $this->authKey = $authKeyGenerator->generate();
     }
 
     private function setPassword(Password $password, PasswordHasherInterface $passwordHasher): void
@@ -53,7 +35,6 @@ final class User
             'email' => $this->email->toString(),
             'name' => $this->name->toString(),
             'password_hash' => $this->passwordHash,
-            'auth_key' => $this->authKey,
         ];
     }
 
@@ -64,7 +45,6 @@ final class User
             email: new Email($data['email']),
             name: new UserName($data['name']),
             passwordHash: $data['password_hash'],
-            authKey: $data['auth_key'],
         );
     }
 }

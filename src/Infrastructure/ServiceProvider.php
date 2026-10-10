@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure;
 
+use App\Domain\Token\RefreshTokenRepositoryInterface;
+use App\Domain\Token\TokenHasherInterface;
 use App\Domain\Task\TaskRepositoryInterface;
-use App\Domain\User\AuthKeyGeneratorInterface;
 use App\Domain\User\PasswordHasherInterface;
 use App\Domain\User\UserRepositoryInterface;
+use App\Infrastructure\Token\Sha256TokenHasher;
+use App\Infrastructure\Repository\MysqlRefreshTokenRepository;
 use App\Infrastructure\Repository\MysqlTaskRepository;
 use App\Infrastructure\Repository\MysqlUserRepository;
-use App\Infrastructure\User\RandomAuthKeyGenerator;
 use App\Infrastructure\User\YiiPasswordHasher;
+use Psr\Clock\ClockInterface;
 use Yiisoft\Aliases\Aliases;
 use Yiisoft\Cache\File\FileCache;
 use Yiisoft\Db\Cache\SchemaCache;
@@ -31,12 +34,9 @@ final readonly class ServiceProvider implements ServiceProviderInterface
         return [
             TaskRepositoryInterface::class => MysqlTaskRepository::class,
             UserRepositoryInterface::class => MysqlUserRepository::class,
-
-            AuthKeyGeneratorInterface::class
-            => static fn() => new RandomAuthKeyGenerator(
-                length: 64,
-                duration: 432000, // 5 days
-            ),
+            RefreshTokenRepositoryInterface::class => MysqlRefreshTokenRepository::class,
+            TokenHasherInterface::class => Sha256TokenHasher::class,
+            ClockInterface::class => SystemClock::class,
             PasswordHasherInterface::class => YiiPasswordHasher::class,
             ConnectionInterface::class => static fn(Aliases $aliases) => new Connection(
                 new Driver(

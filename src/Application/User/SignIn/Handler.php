@@ -4,35 +4,34 @@ declare(strict_types=1);
 
 namespace App\Application\User\SignIn;
 
-use App\Domain\User\AuthKeyGeneratorInterface;
+use App\Domain\Token\RefreshTokenRepositoryInterface;
+use App\Domain\Token\TokenPair;
 use App\Domain\User\PasswordHasherInterface;
-use App\Domain\User\User;
 use App\Domain\User\UserNotFound;
 use App\Domain\User\UserRepositoryInterface;
+use Psr\Clock\ClockInterface;
 
 final readonly class Handler
 {
     public function __construct(
         private PasswordHasherInterface $passwordHasher,
         private UserRepositoryInterface $userRepository,
-        private AuthKeyGeneratorInterface $authKeyGenerator,
+        private RefreshTokenRepositoryInterface $refreshTokenRepository,
+        private ClockInterface $clock,
     ) {}
 
-    public function handle(Command $command): ?User
+    public function handle(Command $command): ?TokenPair
     {
         try {
             $user = $this->userRepository->getUserByEmail($command->email);
+        } catch (UserNotFound) {
+            return null;
+        }
 
-            if(!$user->isValidPassword($command->password, $this->passwordHasher)) {
-                return null;
-            }
+        if (!$user->isValidPassword($command->password, $this->passwordHasher)) {
+            return null;
+        }
 
-            $user->generateAuthKey($this->authKeyGenerator);
-            $this->userRepository->updateUser($user);
-
-            return $user;
-        } catch (UserNotFound) {}
-
-        return null;
+        return $this->refreshTokenRepository->create($user, $this->clock->now());
     }
 }

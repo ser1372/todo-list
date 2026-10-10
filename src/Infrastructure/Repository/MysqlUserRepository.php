@@ -20,7 +20,7 @@ final readonly class MysqlUserRepository implements UserRepositoryInterface
     public function getUserByEmail(Email $email): User
     {
         $data = $this->db->createQuery()
-            ->select(['id', 'email', 'name', 'password_hash', 'auth_key'])
+            ->select(['id', 'email', 'name', 'password_hash'])
             ->from('users')
             ->where(['email' => $email->toString()])
             ->one();
@@ -50,25 +50,10 @@ final readonly class MysqlUserRepository implements UserRepositoryInterface
         }
     }
 
-    public function getUserByAuthKey(string $token): User
-    {
-        $data = $this->db->createQuery()
-            ->select(['id', 'email', 'name', 'password_hash', 'auth_key'])
-            ->from('users')
-            ->where(['auth_key' => $token])
-            ->one();
-
-        if(null === $data) {
-            throw new UserNotFound();
-        }
-
-        return User::fromArray($data);
-    }
-
     public function getUserById(UserId $id): User
     {
         $data = $this->db->createQuery()
-            ->select(['id', 'email', 'name', 'password_hash', 'auth_key'])
+            ->select(['id', 'email', 'name', 'password_hash'])
             ->from('users')
             ->where(['id' => $id->toString()])
             ->one();

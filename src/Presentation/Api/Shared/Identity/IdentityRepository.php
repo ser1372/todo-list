@@ -9,9 +9,8 @@ use App\Domain\User\UserNotFound;
 use App\Domain\User\UserRepositoryInterface;
 use Yiisoft\Auth\IdentityInterface;
 use Yiisoft\Auth\IdentityRepositoryInterface;
-use Yiisoft\Auth\IdentityWithTokenRepositoryInterface;
 
-final readonly class IdentityRepository implements IdentityRepositoryInterface, IdentityWithTokenRepositoryInterface
+final readonly class IdentityRepository implements IdentityRepositoryInterface
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
@@ -26,15 +25,6 @@ final readonly class IdentityRepository implements IdentityRepositoryInterface, 
 
         try {
             return new UserIdentity($this->userRepository->getUserById($userId));
-        } catch (UserNotFound) {}
-
-        return null;
-    }
-
-    public function findIdentityByToken(string $token, ?string $type = null): ?IdentityInterface
-    {
-        try {
-            return new UserIdentity($this->userRepository->getUserByAuthKey($token));
         } catch (UserNotFound) {}
 
         return null;

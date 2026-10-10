@@ -17,6 +17,14 @@ return [
         ->action(Api\Register\Action::class)
         ->name('api.register'),
 
+    Route::post('/refresh')
+        ->action(Api\Auth\Refresh\Action::class)
+        ->name('api.refresh'),
+
+    Route::post('/logout')
+        ->action(Api\Auth\Logout\Action::class)
+        ->name('api.logout'),
+
     Group::create()
         ->middleware(Authentication::class)
         ->routes(

@@ -34,10 +34,8 @@ final readonly class Action
             return $this->responseFactory->fail('Page not found.', httpCode: Status::NOT_FOUND);
         }
 
-        $paginator = $paginator->withCurrentPage($input->page);
-
         return $this->responseFactory->success(
-            $paginator,
+            $paginator->withCurrentPage($input->page),
             new OffsetPaginatorPresenter(new TaskPresenter()),
         );
     }
